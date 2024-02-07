@@ -1,0 +1,15 @@
+                schedule[device, 0] = new Schedule(1, "Casovni program 1", "Casovni program 1");
+                devobj[device].AddBacnetObject(schedule[device, 0]);
+                schedule[device, 1] = new Schedule(2, "Casovni program 2", "Casovni program 2");
+                devobj[device].AddBacnetObject(schedule[device, 1]);
+
+
+  devobj[device].AddBacnetObject(new NotificationClass(0, "NC00", "NotificationClass0-DG1(0):Critical"));
+                devobj[device].AddBacnetObject(new NotificationClass(1, "NC01", "NotificationClass1-FL1(1):Urgent"));   //??
+                devobj[device].AddBacnetObject(new NotificationClass(2, "NC02", "NotificationClass2-WA1(2):High"));   //??
+                devobj[device].AddBacnetObject(new NotificationClass(3, "NC03", "NotificationClass3-MA1(3):Medium"));   //??
+                devobj[device].AddBacnetObject(new NotificationClass(4, "NC04", "NotificationClass4-OP(4):Disable"));   //??
+
+
+      //bac[i].bacnet_client.OnWritePropertyMultipleRequest  +=  new BacnetClient.WritePropertyMultipleRequestHandler(OnWritePropertyMultipleRequest);
+                //bac[i].bacnet_client.OnWritePropertyRequest += new BacnetClient.WritePropertyRequestHandler(OnWritePropertyRequest);

@@ -1,0 +1,9 @@
+V2 dodan programèek za obdelavo urnikov
+V8 dodan branje vseh registrov in majhna optimizacija branja odvisno od zahtevanega registra odstranil tal
+V9 Vpisovanje preko yabe v modbus
+V1O Implementacija BacnetTCPClient+IdSlave in Implentacija Digital Value,Odstranil Scheduler ciscenje kode,Optimizacija porabe prostora(array[] v list<>+neomejeno stevilo maprav in tock).
+V11 Koncana truktura v ini filu + vse funkcije F I U W FR 
+V12 Implementacija templatov in update za vpisovanje in branje registrov,delujoc present value kolicnik
+V13 SQLite baza vpisovanje in update vrednosti 
+v14 odstranjeni neuporabljeni Package
+v15 trendlog (yabe problem pri branju hexa)+ves trend log implementation manka trentime 
