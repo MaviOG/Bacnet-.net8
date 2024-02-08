@@ -143,11 +143,11 @@ namespace Tal_to_Bacnet
         }
 
 
-        void read_modbus(IniFile MyIni, SQLite SQLiteClass)
+        async Task read_modbus(IniFile MyIni, SQLite SQLiteClass)
         {
             read_modbus_devices(MyIni, SQLiteClass);
         }
-        void read_modbus_devices(IniFile MyIni, SQLite SQLiteClass)
+        async void read_modbus_devices(IniFile MyIni, SQLite SQLiteClass)
         {
 
             Dictionary<string, (int, int)> CoilStatusPoint = new Dictionary<string, (int, int)>();
@@ -171,13 +171,13 @@ namespace Tal_to_Bacnet
                 MyIni = new IniFile("Tal2Bacnet.ini");
                 SortPoints(device);
                 MyIni = new IniFile("Tal2Bacnet.ini");
-                ConnectionMbus(device);
-                Read_ModBus_values(device);
+                await ConnectionMbus(device);
+                await Read_ModBus_values(device);
                 MyIni = new IniFile("Tal2Bacnet.ini");
                 write_virtual_modbus_device(device, SQLiteClass);
                 MyIni = new IniFile("Tal2Bacnet.ini");
             }
-            void ConnectionMbus(int device)
+            async Task ConnectionMbus(int device)
             {
                 modbusClient.Add(new ModbusTCPClient(MyIni.Read("IP", "Device_" + (device + 1)), Convert.ToInt32(MyIni.Read("Port", "Device_" + (device + 1))), Convert.ToByte(MyIni.Read("ID", "Device_" + (device + 1)))));
             }
@@ -225,7 +225,7 @@ namespace Tal_to_Bacnet
                     }
                 }
             }
-            void Read_ModBus_values(int device)
+            async Task Read_ModBus_values(int device)
             {
                 if (CoilStatusPoint.Count != 0)
                 {
@@ -902,7 +902,7 @@ namespace Tal_to_Bacnet
             return ModbusUtility.GetSingle(temp[1], temp[0]);
             //return EasyModbus.ModbusClient.ConvertRegistersToFloat(temp);
         }//Zamenjat z modbuuUtility
-        public void WorkingLoop()
+        public async void WorkingLoop()
         {
 
             string DataBasePath = System.IO.Path.Combine(System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).FullName).FullName, "SQLite", "DataBase.db");
@@ -922,13 +922,13 @@ namespace Tal_to_Bacnet
                 // NextUpdatetime.m_PresentValue = DateTime.Now.AddMinutes(UpdateDelay);
                 Console.WriteLine("Refreshing....");
 
-                read_modbus(MyIni, SQLiteClass);
+                await read_modbus(MyIni, SQLiteClass);
                 Console.WriteLine("Done....");
 
 
                 // Wait 10 minutes or a stop condition
 
-                return;
+                Thread.Sleep(10000);
             }
         }
 

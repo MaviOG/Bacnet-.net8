@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using BaCSharp;
 using System.IO.BACnet;
-using Ini;
+using System.Data.SQLite;
+
+
+
+
 namespace Tal_to_Bacnet
 {
     internal class SQLite
@@ -15,24 +19,25 @@ namespace Tal_to_Bacnet
         public IniFile Myini { get; set; }
         public int device { get; set; }
         public string ConnectionString { get; set; }
+       
         public SQLite(string filePath,IniFile myIni, int device, string connectionString)
         {
             this.FilePath = filePath;
             this.Myini = myIni;
             this.device = device;
-            this.ConnectionString = connectionString;//FAIL
-            File.Create(this.FilePath);
+            this.ConnectionString = connectionString;
+            SQLiteConnection.CreateFile(this.FilePath);
             string TableName = this.Myini.Read("Name", "Device_" + device + 1);
-            using (SqliteConnection connection = new SqliteConnection(this.ConnectionString))
+            using (SQLiteConnection connection = new SQLiteConnection(this.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand(
+                using (SQLiteCommand command = new SQLiteCommand(
                 "CREATE TABLE IF NOT EXISTS AnalogValue(DB_ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,BacNetID INTEGER,ObjID INTEGER,Name STRING,Description STRING,Unit INTEGER,PresentValue REAL);", connection))
                 { command.ExecuteNonQuery(); }
-                using (SqliteCommand command = new SqliteCommand(
+                using (SQLiteCommand command = new SQLiteCommand(
                 "CREATE TABLE IF NOT EXISTS DigitalValue(DB_ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,BacNetID INTEGER,ObjID INTEGER,Name STRING,Description STRING,PresentValue INTEGER);", connection))
                 { command.ExecuteNonQuery(); }
-                using (SqliteCommand command = new SqliteCommand(
+                using (SQLiteCommand command = new SQLiteCommand(
                 "CREATE TABLE IF NOT EXISTS MultistateValue(DB_ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,BacNetID INTEGER,ObjID INTEGER,Name STRING,Description STRING,NumberOfStates INTEGER,NumberOfStatesName STRING,PresentValue INTEGER);", connection))
                 { command.ExecuteNonQuery(); }
                 connection.Close();
@@ -40,10 +45,10 @@ namespace Tal_to_Bacnet
         }
         public void InsertPoint(AnalogValue<float> AnalogValue,uint Bacid)
         {
-            using (SqliteConnection connection = new SqliteConnection(this.ConnectionString))
+            using (SQLiteConnection connection = new SQLiteConnection(this.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand(
+                using (SQLiteCommand command = new SQLiteCommand(
                     "INSERT INTO AnalogValue(BacNetID, ObjID, Name, Description, Unit, PresentValue) " +
                     "VALUES (@BacNetID, @ObjID, @Name, @Description, @Unit, @PresentValue);", connection))
                 {
@@ -60,10 +65,10 @@ namespace Tal_to_Bacnet
         }
         public void InsertPoint(BinaryOutput DigitalValue,uint Bacid)
         {
-            using (SqliteConnection connection = new SqliteConnection(this.ConnectionString))
+            using (SQLiteConnection connection = new SQLiteConnection(this.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand(
+                using (SQLiteCommand command = new SQLiteCommand(
                     "INSERT INTO DigitalValue (BacNetID, ObjID, Name, Description, PresentValue) " +
                     "VALUES (@BacNetID, @ObjID, @Name, @Description, @PresentValue);", connection))
                 {
@@ -84,10 +89,10 @@ namespace Tal_to_Bacnet
             {
                 NameState += Name.Value+",";
             }
-            using (SqliteConnection connection = new SqliteConnection(this.ConnectionString))
+            using (SQLiteConnection connection = new SQLiteConnection(this.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand(
+                using (SQLiteCommand command = new SQLiteCommand(
                     "INSERT INTO MultistateValue(BacNetID, ObjID, Name, Description,NumberOfStates,NumberOfStatesName,PresentValue) " +
                     "VALUES (@BacNetID, @ObjID, @Name, @Description,@NumberOfStates,@NumberOfStatesName,@PresentValue);", connection))
                 {
@@ -105,10 +110,10 @@ namespace Tal_to_Bacnet
         }
         public void PointUpdate(int BacID,MultiStateOutput MultistateValue)
         {
-            using (SqliteConnection connection = new SqliteConnection(this.ConnectionString))
+            using (SQLiteConnection connection = new SQLiteConnection(this.ConnectionString))
             {
                 connection.Open();             
-                using (SqliteCommand command = new SqliteCommand(
+                using (SQLiteCommand command = new SQLiteCommand(
                    "UPDATE MultistateValue SET PresentValue = @PresentValue " +
                    "WHERE BacNetID = @BacNetID AND ObjID = @ObjID;", connection))
                 {
@@ -122,12 +127,12 @@ namespace Tal_to_Bacnet
         }
         public void PointUpdate(int BacID, AnalogValue<float> AnalogValue)
         {
-            using (SqliteConnection connection = new SqliteConnection(this.ConnectionString))
+            using (SQLiteConnection connection = new SQLiteConnection(this.ConnectionString))
             {
                 connection.Open();
 
 
-                using (SqliteCommand command = new SqliteCommand(
+                using (SQLiteCommand command = new SQLiteCommand(
                    "UPDATE AnalogValue SET PresentValue = @PresentValue " +
                    "WHERE BacNetID = @BacNetID AND ObjID = @ObjID;", connection))
                 {
@@ -143,12 +148,12 @@ namespace Tal_to_Bacnet
         }
         public void PointUpdate(int BacID, BinaryOutput DigitalValue)
         {
-            using (SqliteConnection connection = new SqliteConnection(this.ConnectionString))
+            using (SQLiteConnection connection = new SQLiteConnection(this.ConnectionString))
             {
                 connection.Open();
 
 
-                using (SqliteCommand command = new SqliteCommand(
+                using (SQLiteCommand command = new SQLiteCommand(
                    "UPDATE DigitalValue SET PresentValue = @PresentValue " +
                    "WHERE BacNetID = @BacNetID AND ObjID = @ObjID;", connection))
                 {

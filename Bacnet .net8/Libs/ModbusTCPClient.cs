@@ -79,7 +79,7 @@ namespace ModbusTCPClientV1
                 {
                     var factory = new ModbusFactory();
                     IModbusMaster master = factory.CreateMaster(client);
-                    ushort[] data = master.ReadInputRegisters(this.UNIT_ID, startAddress, count);
+                     ushort[] data = master.ReadInputRegisters(this.UNIT_ID, startAddress, count);
                     return data;
                 }
             }

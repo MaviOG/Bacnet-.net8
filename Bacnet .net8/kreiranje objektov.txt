@@ -13,3 +13,8 @@
 
       //bac[i].bacnet_client.OnWritePropertyMultipleRequest  +=  new BacnetClient.WritePropertyMultipleRequestHandler(OnWritePropertyMultipleRequest);
                 //bac[i].bacnet_client.OnWritePropertyRequest += new BacnetClient.WritePropertyRequestHandler(OnWritePropertyRequest);
+
+
+;ANALOG VALUE = Point_1=9,AVT2,OBJIme,OBJDeSCRIPTION,4003,UNITS,int,*1
+;DIGITAL VALUE= Point_2=15,DVT1,OBJIme,OBJDeSCRIPTION,1005,int,*1
+;MultistageValue = Point_3=1,MVT1,OBJIme,OBJDeSCRIPTION,3025,2(state number),float,*0.1,opisi,opisi
