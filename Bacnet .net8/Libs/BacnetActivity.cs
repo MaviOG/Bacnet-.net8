@@ -37,7 +37,7 @@ using IniParser;
 using System.IO.BACnet.Serialize;
 using ModbusTCPClientV1;
 using NModbus.Utility;
-using Ini;
+//using Ini;
 
 //using System.Threading;
 
@@ -326,31 +326,30 @@ namespace AnotherStorageImplementation
                         if (value.property.propertyIdentifier == (uint)BacnetPropertyIds.PROP_PRESENT_VALUE)
                         {
                             int devices = Convert.ToInt32(GetAnalogValueCountKey(MyIni, "Device_"));
-                            for(int i = 1; i <= devices; i++)
+                            for (int i = 1; i <= devices; i++)
                             {
                                 string Section = "Device_" + i;
-                                int arrayDevice = Convert.ToInt32(MyIni.IniReadValue( "Device_"+i, "Bacnet_ID",""));
-                                if(arrayDevice == bacid)
+                                int arrayDevice = Convert.ToInt32(MyIni.Read("Bacnet_ID", "Device_" + i));
+                                if (arrayDevice == bacid)
                                 {
                                     int analogcount = GetAnalogValueCount(MyIni, "Device_" + i, "Point_");
 
-                                    if(analogcount == 0)
+                                    if (analogcount == 0)
                                     {
-                                        Section = MyIni.IniReadValue( "Device_" + i, "Template","");
-                                        Template(MyIni.IniReadValue( "Device_" + i, "Template",""), MyIni);
+                                        Section = MyIni.Read("Template", "Device_" + i);
+                                        Template(MyIni.Read("Template", "Device_" + i), MyIni);
                                         analogcount = GetAnalogValueCount(MyIni, Section, "Point_");
                                     }
                                     for (int i1 = 0; i1 < analogcount; i1++)
                                     {
-                                        string array = MyIni.IniReadValue( Section, "Point_" + (i1 + 1),"");
+                                        string array = MyIni.Read("Point_" + (i1 + 1), Section);
                                         string[] values = array.Split(',');
                                         if (Convert.ToInt32(object_id.instance) == Convert.ToInt32(values[0]))
                                         {
-                                            int a ;
-                                           MyIni = new IniFile("Tal2Bacnet.ini");
+                                            int a;
+                                            MyIni = new IniFile("Tal2Bacnet.ini");
 
-                                            ModbusTCPClient foundClient = ModbusTCPClientPush.FirstOrDefault(client => client.SERVER_IP == MyIni.IniReadValue("Device_" + i,"IP", ""));
-                                           
+                                            ModbusTCPClient foundClient = ModbusTCPClientPush.FirstOrDefault(client => client.SERVER_IP == MyIni.Read("IP", "Device_" + i));
                                             if (values[4].Substring(0, 1) == "1")
                                             {
                                                 a = Convert.ToInt32(values[4].Substring(1));
@@ -401,22 +400,35 @@ namespace AnotherStorageImplementation
             int GetAnalogValueCount(IniFile link, string Key, string Section)
             {
 
-                string[] lines = File.ReadAllLines(link.path);
+                string iniText = File.ReadAllText(link.Path);
 
-                IniData data = parser.ReadFile(link.Path);
-                IniFile a; 
-                a.
-                var analogValueKeys = data[Key].Select(k => k.KeyName).Where(k => k.StartsWith(Section));
+
+                var parser = new IniDataParser();
+                IniData data = parser.Parse(iniText);
+                
+               
+                var analogValueKeys = data[Key].Select(k => k.Key).Where(k => k.StartsWith(Section));
 
                 return analogValueKeys.Count();
 
             }
             int GetAnalogValueCountKey(IniFile link, string sectionString)
             {
-                var parser = new FileIniDataParser();
-                IniData data = parser.ReadFile(link.Path);
+                string iniText = File.ReadAllText(link.Path);
 
-                int sectionCount = data.Sections.Count(section => section.SectionName.StartsWith(sectionString));
+                int sectionCount = 0;
+                var parser = new IniDataParser();
+                IniData data = parser.Parse(iniText);
+                data.Sections.Contains(sectionString);
+                foreach (var section in data.Sections)
+                {
+                    string a = Convert.ToString(section);
+                    // Check if the section name starts with the specified sectionString
+                    if (a.Contains(sectionString))
+                    {
+                        sectionCount++;
+                    }
+                }
 
                 return sectionCount;
 
@@ -424,8 +436,7 @@ namespace AnotherStorageImplementation
             }
              void Template(string FileName, IniFile MyIni)
             {
-
-                MyIni.ChangeFile(FileName + ".ini");//naredi za branje fila v datoteki template
+                MyIni.ChangeFile(FileName + ".ini");
 
             }
         }
@@ -439,7 +450,7 @@ namespace AnotherStorageImplementation
 
 
                 //Tal_to_Bacnet.MyService.Read_tal_ext(bacobj.m_PROP_OBJECT_IDENTIFIER.Instance - 10000);
-                Tal_to_Bacnet.MyService.priority_read = bacobj.m_PROP_OBJECT_IDENTIFIER.Instance - 9999;   //bd - če se pojavi zahteva ponovno preveri določeno napravo
+                //Tal_to_Bacnet.MyService.priority_read = bacobj.m_PROP_OBJECT_IDENTIFIER.Instance - 9999;   //bd - če se pojavi zahteva ponovno preveri določeno napravo
 
 
                 if (bacobj != null)
@@ -470,7 +481,7 @@ namespace AnotherStorageImplementation
                         if (p.propertyReferences.Count == 1 && p.propertyReferences[0].propertyIdentifier == (uint)BacnetPropertyIds.PROP_ALL)
                         {                            
                             BaCSharpObject bacobj=device.FindBacnetObject(p.objectIdentifier);
-                            Tal_to_Bacnet.MyService.priority_read = bacobj.m_PROP_OBJECT_IDENTIFIER.Instance - 10000;
+                            //Tal_to_Bacnet.MyService.priority_read = bacobj.m_PROP_OBJECT_IDENTIFIER.Instance - 10000;
 
                             if (!bacobj.ReadPropertyAll(sender, adr, out value))
                             {

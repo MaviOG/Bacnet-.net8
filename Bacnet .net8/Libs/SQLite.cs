@@ -20,9 +20,9 @@ namespace Tal_to_Bacnet
             this.FilePath = filePath;
             this.Myini = myIni;
             this.device = device;
-            this.ConnectionString = connectionString;
+            this.ConnectionString = connectionString;//FAIL
             File.Create(this.FilePath);
-            string TableName = Myini.IniReadValue("Device_" + device + 1, "Name", "");    
+            string TableName = this.Myini.Read("Name", "Device_" + device + 1);
             using (SqliteConnection connection = new SqliteConnection(this.ConnectionString))
             {
                 connection.Open();

@@ -17,11 +17,13 @@ namespace Ini
 		[DllImport("kernel32")]
 		private static extern int GetPrivateProfileString(string section,string key,string def,StringBuilder retVal,int size,string filePath);
 
-		/// <summary>
-		/// INIFile Constructor.
-		/// </summary>
-		/// <param name="INIPath"></param>
-		public IniFile(string INIPath)
+        /// <summary>
+        /// INIFile Constructor.
+        /// </summary>
+        /// <param name="INIPath"></param>
+        /// 
+       
+        public IniFile(string INIPath)
 		{
 			path = INIPath;
 		}
